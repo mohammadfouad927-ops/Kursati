@@ -1,59 +1,246 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Kursati
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Kursati is a training management platform built with Laravel and Filament. It provides an admin panel for managing training programs and their related records, plus a versioned JSON API for student authentication and browsing courses, groups, and branches.
 
-## About Laravel
+> **Project status:** The admin panel and initial API are under development. The API currently supports student registration and login, and read endpoints for courses, groups, and branches. Student self-service program discovery and enrollment are planned; API write handlers for course, group, and branch resources are not implemented yet.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Contents
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [Features](#features)
+- [Technology](#technology)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Running the application](#running-the-application)
+- [Admin panel](#admin-panel)
+- [API](#api)
+- [Data model](#data-model)
+- [Tests](#tests)
+- [Project structure](#project-structure)
+- [Roadmap](#roadmap)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Features
 
-## Learning Laravel
+### Admin panel
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+The Filament admin panel is available at `/admin`. Its resources cover:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Students and user accounts
+- Training courses and subjects
+- Instructors and their subject qualifications
+- Branches and groups
+- Group schedules and course assignments
+- Enrollments and payment details
 
-## Laravel Sponsors
+### API
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+The initial API is prefixed with `/api/v1` and includes:
 
-### Premium Partners
+- Student registration and login endpoints
+- Student profile endpoint protected by the student Sanctum guard
+- Paginated listing and detail endpoints for training courses, groups, and branches
+- JSON resources for course subjects, group schedules, and group branch/course details
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Technology
 
-## Contributing
+- PHP 8.2+
+- Laravel 12
+- Filament 3
+- Laravel Sanctum 4
+- MySQL by default (SQLite can also be configured)
+- Vite 7 and Tailwind CSS 4
+- PHPUnit 11
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Requirements
 
-## Code of Conduct
+- PHP 8.2 or newer with the PHP extensions required by Laravel
+- Composer
+- Node.js and npm
+- A database supported by Laravel (the example environment is configured for MySQL)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Installation
 
-## Security Vulnerabilities
+1. Clone the repository and enter the project directory:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+   ```bash
+   git clone https://github.com/YOUR-USERNAME/kursati.git
+   cd kursati
+   ```
+
+2. Install PHP dependencies and create the environment file:
+
+   ```bash
+   composer install
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+   On Windows Command Prompt, use `copy .env.example .env` instead of `cp`.
+
+3. Configure database settings in `.env`. The defaults expect a local MySQL database named `filament_tutorials` and a `root` user without a password. Create the database first, or update these values to match your setup.
+
+   ```dotenv
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=filament_tutorials
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
+
+4. Run the migrations:
+
+   ```bash
+   php artisan migrate
+   ```
+
+5. Install JavaScript dependencies and build the frontend assets:
+
+   ```bash
+   npm install
+   npm run build
+   ```
+
+The project also defines a convenience setup script. Review its commands before using it, since it runs migrations and builds assets:
+
+```bash
+composer run setup
+```
+
+## Running the application
+
+For local development, start the Laravel server and Vite separately:
+
+```bash
+php artisan serve
+```
+
+```bash
+npm run dev
+```
+
+Open the URL shown by `php artisan serve` to view the welcome page. The admin panel is at `/admin` on the same host.
+
+Alternatively, `composer run dev` starts the Laravel server, queue listener, and Vite development server together.
+
+## Admin panel
+
+Visit `/admin` and sign in with a user account. The current seeder creates a basic user:
+
+```bash
+php artisan db:seed
+```
+
+The seeded account is `test@example.com` with the factory password `password`. This is for local development only; change it immediately and never use it in production.
+
+## API
+
+All versioned routes use the `/api/v1` prefix. For local development, the base URL is commonly `http://127.0.0.1:8000/api/v1` when using `php artisan serve`.
+
+### Current endpoints
+
+| Method | Endpoint | Access | Purpose |
+| --- | --- | --- | --- |
+| `POST` | `/register` | Public | Register a student |
+| `POST` | `/login` | Public | Authenticate a student and issue a Sanctum token |
+| `GET` | `/my-profile` | Student token | Retrieve the authenticated student's profile |
+| `GET` | `/training-courses` | Public | List training courses with subjects (10 per page) |
+| `GET` | `/training-courses/{training_course}` | Public | Retrieve one course and its subjects |
+| `GET` | `/groups` | Public | List groups with branch, course, and schedules (10 per page) |
+| `GET` | `/groups/{group}` | Public | Retrieve one group and its course and schedules |
+| `GET` | `/branches` | Public | List branches (10 per page) |
+| `GET` | `/branches/{branch}` | Public | Retrieve one branch |
+
+Laravel's API resource declarations also register `POST`, `PUT/PATCH`, and `DELETE` routes for training courses, groups, and branches, but their controller methods are placeholders and do not currently implement those operations.
+
+### Example: list training courses
+
+```bash
+curl http://127.0.0.1:8000/api/v1/training-courses
+```
+
+### Example: register a student
+
+Registration validation currently expects these fields. The `avater` field name is spelled that way in the current request validator and must be sent as an image upload.
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/register \
+  -F "name=Example Student" \
+  -F "email=student@example.com" \
+  -F "date_of_birth=2005-04-12" \
+  -F "gender=female" \
+  -F "id_card_number=12345678901234" \
+  -F "phone_number=01012345678" \
+  -F "address=Example Street" \
+  -F "avater=@/path/to/profile.jpg" \
+  -F "city=Cairo" \
+  -F "school=Example School" \
+  -F "grade=Grade 10"
+```
+
+The current login validator accepts `email` and `password`; its authentication logic compares `password` with the student's ID card number. Registration does not currently issue a token. These are initial implementation details and should be replaced with a secure password-based flow before production use.
+
+### Example: access the student profile
+
+Send the token returned from login as a Bearer token:
+
+```bash
+curl http://127.0.0.1:8000/api/v1/my-profile \
+  -H "Authorization: Bearer YOUR_TOKEN"
+```
+
+The response envelope is built by the shared API response trait. Consult the current controller and resource classes for the exact response fields, which may evolve as the API is developed.
+
+## Data model
+
+The database schema represents the following main relationships:
+
+- A training course contains subjects through the `program_courses` pivot table.
+- Groups belong to a training course and can be assigned to a branch; groups have schedules.
+- Instructors can be qualified for multiple subjects.
+- Students enroll in groups through enrollment records.
+- Enrollment records can have payment details, including payment status and verification information.
+
+Migrations are in `database/migrations`. Models are in `app/Models`.
+
+## Tests
+
+Run the PHPUnit suite with:
+
+```bash
+php artisan test
+```
+
+The repository currently includes basic example feature and unit tests. Add feature coverage as API and enrollment behavior is implemented.
+
+## Project structure
+
+```text
+app/
+  Filament/Resources/  Admin panel resources
+  Http/Controllers/    Web and API controllers
+  Http/Requests/       Request validation
+  Http/Resources/      API JSON resources
+  Models/              Eloquent models
+database/
+  migrations/          Database schema
+  seeders/             Database seeders
+routes/
+  api.php              Versioned API routes
+  web.php              Web routes
+tests/
+  Feature/             Feature tests
+  Unit/                Unit tests
+```
+
+## Roadmap
+
+- Complete authenticated student profile management.
+- Add a student-facing API to browse training programs with course descriptions and available branches.
+- Add enrollment endpoints so students can join an available program/group and view their enrollments.
+- Validate enrollment availability and prevent duplicate enrollments.
+- Complete API resource create, update, and delete operations where appropriate.
+- Expand automated tests for authentication, browsing, enrollment, and payment workflows.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project currently uses the MIT license declared in `composer.json`. See the repository's license file when one is added for the full license text.
