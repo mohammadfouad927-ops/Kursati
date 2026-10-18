@@ -8,9 +8,7 @@ use App\Http\Requests\StudentRegisterRequest;
 use App\Http\Requests\StudentUpdateRequest;
 use App\Models\Student;
 use App\Traits\ApiResponse;
-use GrahamCampbell\ResultType\Success;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\StudentResource;
 
 class StudentAuthController extends Controller
 {
@@ -42,17 +40,15 @@ class StudentAuthController extends Controller
 
         $student = Student::create($validateData);
 
-        return $this->successResponse($student, 'Successful Register');
+        return $this->successResponse($student->toResource(), 'Successful Register');
 
     }
 
-    public function profile(){
-        $student = Student::find(auth('student')->user());
-
-        return $this->successResponse($student, 'Student profile retrieved');
+    public function profile(){   
+        return $this->successResponse(auth('student')->user()->toResource(), 'Student profile retrieved');
     }
 
-    public function updated(StudentUpdateRequest $request)
+    public function update(StudentUpdateRequest $request)
     {
         $validateData = $request->validated();
 
@@ -61,7 +57,7 @@ class StudentAuthController extends Controller
         }
         
         $student = Student::find(auth('student')->id);
-        $student::update($validateData);
+        $student->update($validateData);
 
         return $this->successResponse($student, 'Student profile updated successfully');
 

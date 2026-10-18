@@ -17,5 +17,8 @@ Route::prefix('v1')->group(function(){
     Route::apiResource('branches', BranchController::class);
     Route::post('login', [StudentAuthController::class, 'login']);
     Route::post('register', [StudentAuthController::class, 'register']);
-    Route::get('my-profile', [StudentAuthController::class, 'profile'])->middleware('auth:student');
+    Route::middleware('auth:student')->group(function(){
+        Route::get('my-profile', [StudentAuthController::class, 'profile']);
+        Route::put('my-profile', [StudentAuthController::class, 'update']);
+    });
 });
